@@ -21,11 +21,11 @@ export function applyFilters(allEquipments, filters, normalizeId) {
         }
 
         let rawDataToFilter = window.consolidatedCalibrationsRawData;
-        
+
         return rawDataToFilter.filter(item => {
             const sn = normalizeId(item.NumeroSerieConsolidacao || item.NumeroSerie || item.NºdeSérie || item['Nº de Série'] || item['Número de Série']);
             const fornecedorItem = String(item.FornecedorConsolidacao || item.Fornecedor || '').trim().toLowerCase();
-            
+
             const isDivergent = sn && !mainEquipmentSNs.has(sn); 
 
             if (filters.calibrationStatus === 'Divergência (Todos Fornecedores)') {
@@ -78,6 +78,7 @@ export function applyFilters(allEquipments, filters, normalizeId) {
             } else if (originalStatusLower.includes('calibrado (total)')) {
                 effectiveCalibrationStatus = 'Calibrado (Total)';
             } else {
+                // Para "Não Cadastrado" ou "Não Calibrado" (do Excel original)
                 effectiveCalibrationStatus = String(equipment?.StatusCalibacao || ''); 
                 if (effectiveCalibrationStatus.trim() === '') {
                      effectiveCalibrationStatus = 'Não Calibrado/Não Encontrado (Seu Cadastro)';
