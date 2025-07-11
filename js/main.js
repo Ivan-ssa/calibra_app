@@ -13,7 +13,7 @@ function normalizeId(id) {
         return '';
     }
     let strId = String(id).trim(); 
-
+    
     if (/^\d+$/.test(strId)) { 
         return String(parseInt(strId, 10)); 
     }
@@ -22,8 +22,8 @@ function normalizeId(id) {
 // =============================================================
 
 let allEquipments = [];
-window.consolidatedCalibratedMap = new Map(); 
-window.consolidatedCalibrationsRawData = []; 
+window.consolidatedCalibratedMap = new Map(); // SN -> { fornecedor, dataCalibracao }
+window.consolidatedCalibrationsRawData = []; // Todos os itens da aba consolidação
 window.externalMaintenanceSNs = new Set(); 
 window.osRawData = []; 
 window.rondaData = []; 
@@ -98,7 +98,7 @@ function populateCalibrationStatusFilter(rawCalibrationsData) {
     const filterElement = calibrationStatusFilter; 
 
     filterElement.innerHTML = '<option value="">Todos os Status</option>';
-
+    
     const uniqueSuppliers = new Set();
     rawCalibrationsData.forEach(item => {
         const fornecedor = String(item.FornecedorConsolidacao || item.Fornecedor || '').trim();
@@ -201,7 +201,7 @@ async function handleProcessFile() {
         // Processa o arquivo de calibrações consolidadas
         window.consolidatedCalibratedMap.clear(); 
         window.consolidatedCalibrationsRawData = []; 
-
+        
         if (consolidatedCalibrationsFile) {
             outputDiv.textContent += `\nLendo arquivo de Calibrações Consolidadas: ${consolidatedCalibrationsFile.name}...`;
             const consolidatedData = await readExcelFile(consolidatedCalibrationsFile, 'Consolidação'); 
@@ -212,7 +212,7 @@ async function handleProcessFile() {
                     const sn = normalizeId(item.NumeroSerieConsolidacao || item.NumeroSerie || item.NºdeSérie || item['Nº de Série'] || item['Número de Série']); 
                     const fornecedor = String(item.FornecedorConsolidacao || item.Fornecedor || '').trim(); 
                     const dataCalibracao = item.DataCalibracaoConsolidada || item['Data de Calibração'] || ''; 
-
+                    
                     if (sn && fornecedor) {
                         window.consolidatedCalibratedMap.set(sn, { fornecedor: fornecedor, dataCalibracao: dataCalibracao });
                     }
@@ -264,7 +264,7 @@ async function handleProcessFile() {
         } else {
             outputDiv.textContent += `\nArquivo de OS Abertas não selecionado.`;
         }
-
+        
         outputDiv.textContent += '\nProcessamento concluído. Renderizando tabelas...';
         applyAllFiltersAndRender(); 
         populateSectorFilter(allEquipments, sectorFilter); 
@@ -419,7 +419,7 @@ function setupHeaderFilters(equipments) {
                         checkbox.value = value; 
                         checkbox.checked = true; 
                         checkbox.addEventListener('change', () => {
-                            const allIndividualCheckboxes = optionsContainer.querySelectorAll('input[type="checkbox"]:not(.select-all)');
+                            const allIndividualCheckboxes = optionsContainer.querySelectorAll('input[type="checkbox']:not(.select-all)');
                             selectAllCheckbox.checked = Array.from(allIndividualCheckboxes).every(cb => cb.checked);
                             applyAllFiltersAndRender();
                         });
@@ -487,8 +487,8 @@ function applyAllFiltersAndRender() {
             selectedValues.push(checkbox.value); 
         });
 
-        const allOptionsCount = popup.querySelectorAll('input[type="checkbox"]:not(.select-all)').length;
-
+        const allOptionsCount = popup.querySelectorAll('input[type="checkbox']:not(.select-all)').length;
+        
         if (selectedValues.length > 0 && selectedValues.length < allOptionsCount) {
             filters.headerFilters[property] = selectedValues;
         } else if (selectedValues.length === 0 && allOptionsCount > 0 && !popup.querySelector('.select-all').checked) {
