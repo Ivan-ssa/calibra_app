@@ -136,15 +136,14 @@ tr.not-calibrated {
     background-color: #ffcccc; /* Vermelho claro */
     border-left: 5px solid #d9534f; /* Borda vermelha */
 }
-tr.calibrated-dhme { /* Verde claro forte para QUALQUER equipamento calibrado pela consolidação */
-    background-color: #b3e6b3; 
+tr.calibrated-dhme { 
+    background-color: #b3e6b3; /* Verde claro forte */
     border-left: 5px solid #28a745; 
 }
-/* As classes de fornecedores específicos de calibração foram removidas, pois a coloração agora é genérica */
-/* tr.calibrated-sciencetech { 
-    background-color: #b3d9ff; 
+tr.calibrated-sciencetech { 
+    background-color: #b3d9ff; /* Azul claro forte */
     border-left: 5px solid #007bff; 
-} */
+}
 /* Classes de divergência que não são mais usadas para coloração na tabela principal,
    mas podem ser mantidas para referência ou uso futuro. */
 tr.divergent-calibrated { 
@@ -332,6 +331,8 @@ button {
     border-color: #007bff;
     font-weight: bold;
 }
+
+/* ... (Seu CSS existente, incluindo todos os estilos de tabela e filtros de cabeçalho) ... */
 
 /* Estilos para a seção de Ronda */
 #rondaSection {

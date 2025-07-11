@@ -99,13 +99,6 @@ function populateCalibrationStatusFilter(rawCalibrationsData) {
 
     filterElement.innerHTML = '<option value="">Todos os Status</option>';
 
-    // Adiciona a nova opção "Calibrado (Consolidado)"
-    const consolidatedCalibratedOption = document.createElement('option');
-    consolidatedCalibratedOption.value = 'Calibrado (Consolidado)';
-    consolidatedCalibratedOption.textContent = 'Calibrado (Consolidado)';
-    filterElement.appendChild(consolidatedCalibratedOption);
-
-    // As opções de divergência por fornecedor ainda podem ser úteis
     const uniqueSuppliers = new Set();
     rawCalibrationsData.forEach(item => {
         const fornecedor = String(item.FornecedorConsolidacao || item.Fornecedor || '').trim();
@@ -115,15 +108,17 @@ function populateCalibrationStatusFilter(rawCalibrationsData) {
     });
 
     Array.from(uniqueSuppliers).sort().forEach(fornecedor => {
-        // As opções de calibração por fornecedor específico serão removidas em breve,
-        // mas mantidas para o filtro de Divergência por enquanto
+        const optionCalibrated = document.createElement('option');
+        optionCalibrated.value = `Calibrado (${fornecedor})`;
+        optionCalibrated.textContent = `Calibrado (${fornecedor})`;
+        filterElement.appendChild(optionCalibrated);
+
         const optionDivergence = document.createElement('option');
         optionDivergence.value = `Divergência (${fornecedor})`;
         optionDivergence.textContent = `Divergência (${fornecedor})`;
         filterElement.appendChild(optionDivergence);
     });
 
-    // Opções fixas que permanecem
     const fixedOptions = [
         { value: 'Calibrado (Total)', text: 'Calibrado (Total)' }, 
         { value: 'Divergência (Todos Fornecedores)', text: 'Divergência (Todos Fornecedores)' },
@@ -219,7 +214,7 @@ async function handleProcessFile() {
                     const dataCalibracao = item.DataCalibracaoConsolidada || item['Data de Calibração'] || ''; 
 
                     if (sn && fornecedor) {
-                        window.consolidatedCalibratedMap.set(sn, { fornecedor: fornecedor, dataCalibacao: dataCalibracao });
+                        window.consolidatedCalibratedMap.set(sn, { fornecedor: fornecedor, dataCalibracao: dataCalibracao });
                     }
                 });
                 outputDiv.textContent += `\n${window.consolidatedCalibratedMap.size} SNs de calibração consolidados encontrados.`;
@@ -274,7 +269,7 @@ async function handleProcessFile() {
         applyAllFiltersAndRender(); 
         populateSectorFilter(allEquipments, sectorFilter); 
         populateCalibrationStatusFilter(window.consolidatedCalibrationsRawData); 
-        setupHeaderFilters(allEquipments); // Chamada para configurar filtros de cabeçalho
+        setupHeaderFilters(allEquipments); 
 
         renderOsTable(
             window.osRawData,
@@ -364,7 +359,7 @@ function setupHeaderFilters(equipments) {
                     if (columnInfo.prop === 'StatusCalibacao') {
                         const calibInfo = window.consolidatedCalibratedMap.get(normalizeId(eq.NumeroSerie));
                         if (calibInfo) {
-                            value = 'Calibrado (Consolidado)'; // Valor genérico
+                            value = `Calibrado (${calibInfo.fornecedor})`; 
                         } else {
                             const originalStatusLower = String(eq?.StatusCalibacao || '').toLowerCase();
                             if (originalStatusLower.includes('não calibrado') || originalStatusLower.includes('não cadastrado')) {

@@ -91,8 +91,8 @@ export function renderOsTable(
         row.insertCell().textContent = os.Equipamento ?? '';
         row.insertCell().textContent = os.Modelo ?? '';
         row.insertCell().textContent = os.Fabricante ?? '';
-        // row.insertCell().textContent = osStatusCalib; 
-        // row.insertCell().textContent = osStatusManutencao; 
+        row.insertCell().textContent = osStatusCalib; 
+        row.insertCell().textContent = osStatusManutencao; 
     });
 
     document.getElementById('osCount').textContent = `Total: ${osCount} OS`;
